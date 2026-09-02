@@ -1,36 +1,68 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Authorship Attributor — Web UI
 
-## Getting Started
+A Next.js frontend for building an author corpus and attributing documents of
+disputed authorship. It is the companion web client to the stylometry API at
+[EphemSpirit/authorship_attributor](https://github.com/EphemSpirit/authorship_attributor),
+which does the actual writing-style analysis.
 
-First, run the development server:
+## What it does
+
+1. **Manage authors** — create, view, edit, and delete authors in the database.
+2. **Add a known document** — upload a document with one or more author names.
+   Authors are created if they don't exist, and the document is added to the
+   corpus used for attribution.
+3. **Attribute a disputed document** — upload a document of unknown or disputed
+   authorship and get back the 5 most likely author candidates, each with a
+   confidence score.
+
+## Status
+
+Early scaffolding. The landing page (`app/page.tsx`) describes the intended
+workflow; the author-management and upload screens are still being built.
+
+## Getting started
+
+Requires Node.js 18.18+ (Next.js 16).
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You also need the API running. See its README for setup; by default it serves on
+[http://localhost:8000](http://localhost:8000) with Swagger docs at `/docs`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Configuration
 
-## Learn More
+Point the UI at the API with an environment variable in `.env.local`:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Command         | Description                        |
+| --------------- | --------------------------------- |
+| `npm run dev`   | Start the dev server              |
+| `npm run build` | Production build                  |
+| `npm run start` | Serve the production build        |
+| `npm run lint`  | Run ESLint                        |
 
-## Deploy on Vercel
+## Tech stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- [Next.js](https://nextjs.org) 16 (App Router)
+- React 19
+- Tailwind CSS 4
+- TypeScript
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Related
+
+- API / analysis backend: [EphemSpirit/authorship_attributor](https://github.com/EphemSpirit/authorship_attributor)
+  — FastAPI + SQLAlchemy + PostgreSQL, NLTK-based stylometry. Relevant endpoints:
+  - `POST /authors`, `GET /authors`
+  - `GET /authors/{author_id}/style-profile`
+  - `POST /documents/upload-known`
+  - `POST /documents/upload-disputed`
