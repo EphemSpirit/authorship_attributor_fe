@@ -7,7 +7,7 @@ export default function Card({
 }) {
   return (
     <div className="rounded-lg border border-black p-5">
-      <div className="font-bold pb-2">{title}</div>
+      <div className="font-bold text-xl pb-2">{title}</div>
       <p className="text-sm text-black">{children}</p>
     </div>
   )
