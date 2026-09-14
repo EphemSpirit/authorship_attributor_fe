@@ -1,25 +1,22 @@
 import Card from '@/components/Card'
-import Header from '@/components/Header'
 
 export default function Home() {
   return (
     <main className="flex min-w-screen flex-col items-center font-xl">
-      <Header />
-
       <section className="flex w-5/6 flex-col items-center pt-4 text-center">
         <div className="grid w-full grid-cols-1 gap-4 text-left sm:grid-cols-3">
-          <Card title="1. Manage Authors">
+          <Card href="/authors" title="1. Manage Authors">
             Create, view, edit, and delete authors in the database.
           </Card>
 
-          <Card title="2. Add a Known Document">
+          <Card href="#" title="2. Add a Known Document">
             Upload a document along with one or more author names. This
             creates the author(s) if they don&apos;t already exist and
             associates the document with them, growing the corpus used for
             attribution.
           </Card>
 
-          <Card title="3. Attribute a Disputed Document">
+          <Card href="#" title="3. Attribute a Disputed Document">
             Upload a document of unknown or disputed authorship. The API
             returns the 5 most likely author candidates, each with a
             confidence score.
