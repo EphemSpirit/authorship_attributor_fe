@@ -18,6 +18,7 @@ const AuthorsList = ({ authors }: { authors: Author[] }) => {
               <th className="p-3 font-bold">Age</th>
               <th className="p-3 font-bold">Bio</th>
               <th className="p-3 font-bold">Style Profile</th>
+              <th className="p-3 font-bold">Edit</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-black/10 bg-white text-black">
@@ -32,6 +33,11 @@ const AuthorsList = ({ authors }: { authors: Author[] }) => {
                 <td className="p-3">
                   <Link href="#" className="font-bold text-red-800 hover:underline">
                     View Profile
+                  </Link>
+                </td>
+                <td className="p-3">
+                  <Link href="#" className="font-bold text-red-800 hover:underline">
+                    Edit Author
                   </Link>
                 </td>
               </tr>
