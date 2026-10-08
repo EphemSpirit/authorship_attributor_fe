@@ -1,15 +1,32 @@
+"use client"
+
+import { useState } from "react"
 import Link from "next/link"
 import Author from "@/app/types/author"
+import NewAuthorSlideout from "./NewAuthorSlideout"
 
 const truncate = (text: string, maxLength: number) =>
   text.length > maxLength ? `${text.slice(0, maxLength)}…` : text
 
 const AuthorsList = ({ authors }: { authors: Author[] }) => {
+  const [authorFormOpen, setAuthorFormOpen] = useState(false)
   return (
     <>
       <div className="flex items-center justify-center underline">
         <h2 className="font-bold text-2xl">Authors</h2>
       </div>
+      <div className="mr-4 mt-4 ml-auto flex w-fit border border-black rounded-lg">
+        <button
+          type="button"
+          onClick={() => setAuthorFormOpen(true)}
+          className="rounded-lg bg-red-800 px-4 py-2 font-bold text-white hover:bg-red-900 cursor-pointer"
+        >
+          New Author
+        </button>
+      </div>
+      {authorFormOpen && (
+        <NewAuthorSlideout isOpen={authorFormOpen} setIsOpen={setAuthorFormOpen} />
+      )}
       <div className="m-4 overflow-hidden rounded-lg border border-black">
         <table className="w-full border-collapse text-left">
           <thead>
@@ -31,9 +48,13 @@ const AuthorsList = ({ authors }: { authors: Author[] }) => {
                 <td className="p-3">{author.author_metadata.age}</td>
                 <td className="p-3">{truncate(author.author_metadata.bio, 50)}</td>
                 <td className="p-3">
-                  <Link href="#" className="font-bold text-red-800 hover:underline">
-                    View Profile
-                  </Link>
+                  {!!author.style_profiles.length ? (
+                    <Link href={`/authors/${author.id}`} className="font-bold text-red-800 hover:underline">
+                      View Profile
+                    </Link>
+                  ) : (
+                    <p>No Profile Generated Yet</p>
+                  )}
                 </td>
                 <td className="p-3">
                   <Link href="#" className="font-bold text-red-800 hover:underline">

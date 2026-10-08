@@ -1,6 +1,7 @@
 import StyleProfile from "./style_profile"
 
 type Author = {
+  id: number,
   author_metadata: {
     age: number,
     bio: string
