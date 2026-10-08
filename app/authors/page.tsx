@@ -1,5 +1,5 @@
 import AuthorsList from "@/components/Authors/AuthorsList"
-import { fetchAuthors } from "@/utils/author_utils"
+import { fetchAuthors } from "@/utils/author_actions"
 
 
 async function AuthorsPage() {
