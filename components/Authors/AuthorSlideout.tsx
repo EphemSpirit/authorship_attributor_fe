@@ -1,14 +1,21 @@
 "use client"
 
 import { useActionState } from "react"
-import { createAuthor, CreateAuthorState } from "@/utils/author_actions"
+import Author from "@/app/types/author"
+import { createAuthor, updateAuthor, AuthorFormState } from "@/utils/author_actions"
 
-const initialState: CreateAuthorState = { success: false, error: null }
+const initialState: AuthorFormState = { success: false, error: null }
 
-const NewAuthorSlideout = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) => {
+interface AuthorSlideoutProps {
+  isOpen: boolean
+  setIsOpen: (open: boolean) => void
+  author?: Author
+}
+
+const AuthorSlideout = ({ isOpen, setIsOpen, author }: AuthorSlideoutProps) => {
   const [state, formAction, isPending] = useActionState(
-    async (_prevState: CreateAuthorState, formData: FormData) => {
-      const result = await createAuthor(formData)
+    async (_prevState: AuthorFormState, formData: FormData) => {
+      const result = author ? await updateAuthor(author.id, formData) : await createAuthor(formData)
       if (result.success) setIsOpen(false)
       return result
     },
@@ -29,7 +36,7 @@ const NewAuthorSlideout = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: 
           }`}
       >
         <div className="mb-6 flex items-center justify-between gap-8">
-          <h3 className="text-xl font-bold">New Author</h3>
+          <h3 className="text-xl font-bold">{author ? "Edit Author" : "New Author"}</h3>
           <button
             type="button"
             onClick={() => setIsOpen(false)}
@@ -46,6 +53,7 @@ const NewAuthorSlideout = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: 
             <input
               type="text"
               name="name"
+              defaultValue={author?.name}
               required
               className="rounded-lg border border-black px-3 py-2 font-normal"
             />
@@ -55,6 +63,7 @@ const NewAuthorSlideout = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: 
             <input
               type="number"
               name="age"
+              defaultValue={author?.author_metadata.age}
               min={0}
               required
               className="rounded-lg border border-black px-3 py-2 font-normal"
@@ -64,6 +73,7 @@ const NewAuthorSlideout = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: 
             Bio
             <textarea
               name="bio"
+              defaultValue={author?.author_metadata.bio}
               rows={5}
               className="rounded-lg border border-black px-3 py-2 font-normal"
             />
@@ -76,7 +86,7 @@ const NewAuthorSlideout = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: 
             disabled={isPending}
             className="rounded-lg bg-red-800 px-4 py-2 font-bold text-white hover:bg-red-900 disabled:opacity-50"
           >
-            {isPending ? "Saving…" : "Create Author"}
+            {isPending ? "Saving…" : author ? "Update Author" : "Create Author"}
           </button>
         </form>
       </aside>
@@ -84,4 +94,4 @@ const NewAuthorSlideout = ({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: 
   )
 }
 
-export default NewAuthorSlideout
+export default AuthorSlideout

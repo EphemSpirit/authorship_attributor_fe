@@ -3,13 +3,21 @@
 import { useState } from "react"
 import Link from "next/link"
 import Author from "@/app/types/author"
-import NewAuthorSlideout from "./NewAuthorSlideout"
+import AuthorSlideout from "./AuthorSlideout"
 
 const truncate = (text: string, maxLength: number) =>
   text.length > maxLength ? `${text.slice(0, maxLength)}…` : text
 
 const AuthorsList = ({ authors }: { authors: Author[] }) => {
   const [authorFormOpen, setAuthorFormOpen] = useState(false)
+  const [editingAuthorId, setEditingAuthorId] = useState<number | null>(null)
+  const editingAuthor = authors.find((author) => author.id === editingAuthorId)
+
+  const openAuthorForm = (authorId: number | null) => {
+    setEditingAuthorId(authorId)
+    setAuthorFormOpen(true)
+  }
+
   return (
     <>
       <div className="flex items-center justify-center underline">
@@ -18,14 +26,14 @@ const AuthorsList = ({ authors }: { authors: Author[] }) => {
       <div className="mr-4 mt-4 ml-auto flex w-fit border border-black rounded-lg">
         <button
           type="button"
-          onClick={() => setAuthorFormOpen(true)}
+          onClick={() => openAuthorForm(null)}
           className="rounded-lg bg-red-800 px-4 py-2 font-bold text-white hover:bg-red-900 cursor-pointer"
         >
           New Author
         </button>
       </div>
       {authorFormOpen && (
-        <NewAuthorSlideout isOpen={authorFormOpen} setIsOpen={setAuthorFormOpen} />
+        <AuthorSlideout isOpen={authorFormOpen} setIsOpen={setAuthorFormOpen} author={editingAuthor} />
       )}
       <div className="m-4 overflow-hidden rounded-lg border border-black">
         <table className="w-full border-collapse text-left">
@@ -57,9 +65,13 @@ const AuthorsList = ({ authors }: { authors: Author[] }) => {
                   )}
                 </td>
                 <td className="p-3">
-                  <Link href="#" className="font-bold text-red-800 hover:underline">
+                  <button
+                    type="button"
+                    onClick={() => openAuthorForm(author.id)}
+                    className="font-bold text-red-800 hover:underline cursor-pointer"
+                  >
                     Edit Author
-                  </Link>
+                  </button>
                 </td>
               </tr>
             ))}
