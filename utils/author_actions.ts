@@ -1,6 +1,8 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import Author from "@/app/types/author"
+
 
 export type AuthorFormState = {
   success: boolean
@@ -51,12 +53,19 @@ export const updateAuthor = async (id: number, formData: FormData): Promise<Auth
   return { success: true, error: null }
 }
 
-import Author from "@/app/types/author"
+export const deleteAuthor = async (id: number): Promise<AuthorFormState> => {
+  const res = await fetch(`${process.env.FASTAPI_URL}/authors/${id}`, { method: "DELETE" })
+
+  if (!res.ok) return { success: false, error: "Failed to delete author" }
+
+  revalidatePath("/authors")
+  return { success: true, error: null }
+}
 
 export const fetchAuthors = async (): Promise<Author[]> => {
   const res = await fetch(`${process.env.FASTAPI_URL}/authors`)
   const authors: Author[] = await res.json()
-  return authors.sort((a, b) => a.id - b.id)
+  return authors;
 }
 
 export const getAuthorById = async (id: number): Promise<Author> => {

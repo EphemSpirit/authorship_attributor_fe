@@ -1,9 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import Link from "next/link"
 import Author from "@/app/types/author"
+import { deleteAuthor } from "@/utils/author_actions"
 import AuthorSlideout from "./AuthorSlideout"
+import DeleteAuthorModal from "./DeleteAuthorModal"
 
 const truncate = (text: string, maxLength: number) =>
   text.length > maxLength ? `${text.slice(0, maxLength)}…` : text
@@ -16,6 +18,19 @@ const AuthorsList = ({ authors }: { authors: Author[] }) => {
   const openAuthorForm = (authorId: number | null) => {
     setEditingAuthorId(authorId)
     setAuthorFormOpen(true)
+  }
+
+  const [deletingAuthor, setDeletingAuthor] = useState<Author | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [isDeleting, startDeleteTransition] = useTransition()
+
+  const confirmDelete = (id: number) => {
+    setDeletingAuthor(null)
+    setDeleteError(null)
+    startDeleteTransition(async () => {
+      const result = await deleteAuthor(id)
+      if (!result.success) setDeleteError(result.error)
+    })
   }
 
   return (
@@ -35,6 +50,14 @@ const AuthorsList = ({ authors }: { authors: Author[] }) => {
       {authorFormOpen && (
         <AuthorSlideout isOpen={authorFormOpen} setIsOpen={setAuthorFormOpen} author={editingAuthor} />
       )}
+      {deletingAuthor && (
+        <DeleteAuthorModal
+          author={deletingAuthor}
+          onCancel={() => setDeletingAuthor(null)}
+          onConfirm={confirmDelete}
+        />
+      )}
+      {deleteError && <p className="mx-4 mt-4 text-red-800">{deleteError}</p>}
       <div className="m-4 overflow-hidden rounded-lg border border-black">
         <table className="w-full border-collapse text-left">
           <thead>
@@ -44,6 +67,7 @@ const AuthorsList = ({ authors }: { authors: Author[] }) => {
               <th className="p-3 font-bold">Bio</th>
               <th className="p-3 font-bold">Style Profile</th>
               <th className="p-3 font-bold">Edit</th>
+              <th className="p-3 font-bold">Delete</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-black/10 bg-white text-black">
@@ -71,6 +95,16 @@ const AuthorsList = ({ authors }: { authors: Author[] }) => {
                     className="font-bold text-red-800 hover:underline cursor-pointer"
                   >
                     Edit Author
+                  </button>
+                </td>
+                <td className="p-3">
+                  <button
+                    type="button"
+                    onClick={() => setDeletingAuthor(author)}
+                    disabled={isDeleting}
+                    className="font-bold text-red-800 hover:underline cursor-pointer disabled:opacity-50"
+                  >
+                    Delete Author
                   </button>
                 </td>
               </tr>
