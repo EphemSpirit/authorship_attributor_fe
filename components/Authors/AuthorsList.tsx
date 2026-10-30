@@ -13,6 +13,9 @@ const truncate = (text: string, maxLength: number) =>
 const AuthorsList = ({ authors }: { authors: Author[] }) => {
   const [authorFormOpen, setAuthorFormOpen] = useState(false)
   const [editingAuthorId, setEditingAuthorId] = useState<number | null>(null)
+  const [deletingAuthor, setDeletingAuthor] = useState<Author | null>(null)
+  const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [isDeleting, startDeleteTransition] = useTransition()
   const editingAuthor = authors.find((author) => author.id === editingAuthorId)
 
   const openAuthorForm = (authorId: number | null) => {
@@ -20,16 +23,16 @@ const AuthorsList = ({ authors }: { authors: Author[] }) => {
     setAuthorFormOpen(true)
   }
 
-  const [deletingAuthor, setDeletingAuthor] = useState<Author | null>(null)
-  const [deleteError, setDeleteError] = useState<string | null>(null)
-  const [isDeleting, startDeleteTransition] = useTransition()
+
 
   const confirmDelete = (id: number) => {
-    setDeletingAuthor(null)
-    setDeleteError(null)
     startDeleteTransition(async () => {
       const result = await deleteAuthor(id)
       if (!result.success) setDeleteError(result.error)
+      startDeleteTransition(() => {
+        setDeletingAuthor(null)
+        setDeleteError(null)
+      })
     })
   }
 
