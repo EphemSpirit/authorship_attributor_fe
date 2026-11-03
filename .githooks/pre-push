@@ -1,0 +1,15 @@
+#!/bin/sh
+# Runs the full Jest suite before every push. A failing test aborts the push.
+# Bypass in an emergency with: git push --no-verify
+
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+echo "pre-push: running test suite..."
+
+if ! npm test -- --ci; then
+  echo ""
+  echo "pre-push: tests failed — push aborted."
+  exit 1
+fi
+
+echo "pre-push: all tests passed."
