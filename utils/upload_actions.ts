@@ -9,6 +9,22 @@ export type UploadFormState = {
 
 const GENERIC_ERROR = "Something went wrong. Please try again."
 
+// FastAPI errors look like { detail: "message" } for HTTPException, or
+// { detail: [{ msg: "..." }, ...] } for request validation errors.
+const getErrorMessage = async (res: Response): Promise<string> => {
+  try {
+    const { detail } = await res.json()
+    if (typeof detail === "string" && detail.trim()) return detail
+    if (Array.isArray(detail)) {
+      const messages = detail.map((d) => d?.msg).filter((m) => typeof m === "string" && m)
+      if (messages.length) return messages.join(", ")
+    }
+  } catch {
+    // Non-JSON or empty body — fall through.
+  }
+  return GENERIC_ERROR
+}
+
 export const uploadKnownDocuments = async (
   _prevState: UploadFormState,
   formData: FormData
@@ -35,7 +51,7 @@ export const uploadKnownDocuments = async (
 
     try {
       const res = await fetch(url, { method: "POST", body })
-      if (!res.ok) return { error: GENERIC_ERROR }
+      if (!res.ok) return { error: await getErrorMessage(res) }
     } catch {
       return { error: GENERIC_ERROR }
     }
