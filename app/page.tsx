@@ -9,7 +9,7 @@ export default function Home() {
             Create, view, edit, and delete authors in the database.
           </Card>
 
-          <Card href="#" title="2. Add a Known Document">
+          <Card href="/uploads/known" title="2. Add a Known Document">
             Upload a document along with one or more author names. This
             creates the author(s) if they don&apos;t already exist and
             associates the document with them, growing the corpus used for
